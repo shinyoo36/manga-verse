@@ -12,6 +12,11 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+      fontFamily: {
+        teko: ["Teko", "sans-serif"],
+        poppins: ["Poppins", "sans-serif"],
+        protest: ["Protest Revolution", "sans-serif"],
+      },
     },
   },
   plugins: [],
