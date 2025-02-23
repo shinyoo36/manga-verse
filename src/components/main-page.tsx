@@ -50,7 +50,7 @@ interface MangaDetailProps {
 const MangaDetail: React.FC<MangaDetailProps> = ({ data }) => {
   return (
       <div className="flex flex-col gap-3">
-        <div className="flex flex-row justify-between">
+        <div className="flex flex-row justify-between items-center">
           <p className="text-[16px] font-bold">Latest Updates</p>
           <p className="text-[14px] font-bold bg-[#FD5F00] px-2 rounded-sm">View All</p>
         </div>
@@ -95,7 +95,7 @@ interface MangaRecProps {
 const MangaRec: React.FC<MangaRecProps> = ({ category, data }) => {
   return (
     <div className="flex flex-col w-full space-y-3">
-      <div className="flex flex-row justify-between">
+      <div className="flex flex-row justify-between items-center">
         <p className="text-[16px] font-bold">{category}</p>
         <p className="text-[14px] font-bold bg-[#FD5F00] px-2 rounded-sm">View All</p>
       </div>
