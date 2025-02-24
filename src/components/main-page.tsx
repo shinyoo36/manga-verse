@@ -86,7 +86,14 @@ const MainPage = () => {
   // }, []);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/manga?includes[]=cover_art&limit=6&order%5BlatestUploadedChapter%5D=desc`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/manga?includes[]=cover_art&limit=6&order%5BlatestUploadedChapter%5D=desc`
+    ,{
+      method: "GET",
+      headers: {
+        "Origin": "https://mangaverseread.vercel.app",
+        "Content-Type": "application/json",
+      },
+    })
       .then(response => response.json())
       .then((data: MangaApiResponse) => setLatestUpdatesData(data.data));
   }, []);

@@ -113,9 +113,16 @@ const Carousel = () => {
   const swiperRef = useRef<any>(null); 
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/manga?includes[]=cover_art&includes[]=artist&includes[]=author&order[followedCount]=desc&contentRating[]=safe&contentRating[]=suggestive&hasAvailableChapters=true&createdAtSince=2025-01-24T17%3A00%3A00`)
-      .then(response => response.json())
-      .then((data: MangaApiResponse) => setPopularNewTitle(data.data));
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/manga?includes[]=cover_art&includes[]=artist&includes[]=author&order[followedCount]=desc&contentRating[]=safe&contentRating[]=suggestive&hasAvailableChapters=true&createdAtSince=2025-01-24T17%3A00%3A00`
+    ,{
+      method: "GET",
+      headers: {
+        "Origin": "https://mangaverseread.vercel.app",
+        "Content-Type": "application/json",
+      },
+    })
+    .then(response => response.json())
+    .then((data: MangaApiResponse) => setPopularNewTitle(data.data));
   }, []);
 
   console.log("popularNewTitle", popularNewTitle);
