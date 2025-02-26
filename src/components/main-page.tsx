@@ -77,7 +77,6 @@ const MainPage = () => {
   const [popularNewTitleData, setPopularNewTitleData] = useState<Manga[]>([]);
   const [latestUpdatesData, setLatestUpdatesData] = useState<Manga[]>([]);
 
-  console.log("NEXT_PUBLIC_API_URL:", process.env.NEXT_PUBLIC_API_URL);
 
   // useEffect(() => {
   //   fetch(`${process.env.NEXT_PUBLIC_API_URL}/manga?includes[]=cover_art&includes[]=artist&includes[]=author&order[followedCount]=desc&contentRating[]=safe&contentRating[]=suggestive&hasAvailableChapters=true&createdAtSince=2025-01-24T17%3A00%3A00`)
@@ -86,7 +85,7 @@ const MainPage = () => {
   // }, []);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/manga?includes[]=cover_art&limit=6&order%5BlatestUploadedChapter%5D=desc`
+    fetch(`${process.env.NEXT_PUBLIC_MANGADEX_API_URL}/manga?includes[]=cover_art&limit=6&order%5BlatestUploadedChapter%5D=desc`
     ,{
       method: "GET",
       headers: {
