@@ -16,6 +16,38 @@
   }
 }
 
+/* Hide arrows for number inputs in Chrome, Safari, Edge, and Opera */
+.no-arrows::-webkit-outer-spin-button,
+.no-arrows::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide arrows for number inputs in Firefox */
+.no-arrows {
+  -moz-appearance: textfield;
+}
+
+
+/* WebKit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 6px; /* Adjust scrollbar width */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Makes the track transparent */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #403F3F; /* Scrollbar color */
+  border-radius: 12px; /* Rounded edges */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2e2d2d; /* Darker color on hover */
+}
+
+
 body {
   color: var(--foreground);
   background: var(--background);
@@ -38,9 +70,34 @@ html {
   left: 0;
   width: 100%;
   height: 100%;
-  background: url("/img/tes.jpg");
+  background: var(--bg-image);
   background-size: cover;
-  filter: blur(10px);
-  opacity: 0.3; 
+  filter: blur(5px);
+  opacity: 0.5;
   z-index: -1;
+}
+
+
+.bgOren{
+  background: #FD5F00;
+}
+
+.bgItam{
+ background: #171717
+}
+.textOren{
+  color: #FD5F00;
+}
+
+.bgAbu{
+  background: #403F3F;
+}
+
+.bgIjo{
+  background: #51AF5B;
+}
+
+.autocomplete{
+  background: #403F3F;
+
 }
