@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
 import 'swiper/css/navigation';
@@ -18,7 +19,15 @@ import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { IconButton } from "@mui/material";
 import { useRouter } from "next/navigation";
 
-export default function LatestUpdatesPage () {
+export default function LatestUpdatesPage() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <LatestUpdatesContent />
+    </Suspense>
+  );
+}
+
+function LatestUpdatesContent () {
   const searchParams = useSearchParams();
   const page = Number(searchParams.get("page")) || 1;
 
