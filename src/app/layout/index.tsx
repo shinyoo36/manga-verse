@@ -160,9 +160,11 @@ const fetchData = async () => {
                                   </p>
                                 ))}
                               </div>
-                              <p className="invisible md:visible text-[12px] font-regular text-justify line-clamp-4 break-all break-words opacity-80">
-                                {manga.attributes.description.en}
-                              </p>
+                              <div className='hidden md:flex'>
+                                <p className="text-[12px] font-regular text-justify line-clamp-4 break-all break-words opacity-80">
+                                  {manga.attributes.description.en}
+                                </p>
+                              </div>
                             </div>
                             <div className="flex flex-row gap-x-2 py-1 items-center">
                               <div className="flex flex-row gap-1 justify-center items-center">
