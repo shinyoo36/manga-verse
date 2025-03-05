@@ -31,7 +31,7 @@
 
 /* WebKit browsers (Chrome, Safari, Edge) */
 ::-webkit-scrollbar {
-  width: 6px; /* Adjust scrollbar width */
+  width: 8px; /* Adjust scrollbar width */
 }
 
 ::-webkit-scrollbar-track {

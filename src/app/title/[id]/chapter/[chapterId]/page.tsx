@@ -91,6 +91,9 @@ const MangaDetailPage = () => {
   const isLast = currentIndex === 0;
   const isFirst = currentIndex === filteredChapters.length - 1;
 
+  const prevChapter = !isFirst ? filteredChapters[currentIndex + 1] : null;
+  const nextChapter = !isLast ? filteredChapters[currentIndex - 1] : null;
+
   return (
     <MainLayout readPage={true}>
       <div className="flex flex-col items-center justify-center">
@@ -105,7 +108,9 @@ const MangaDetailPage = () => {
           </div>
           <div className="w-full px-4 items-center flex flex-row justify-center gap-4">
             <IconButton disabled={isFirst}>
-              <ArrowBackRoundedIcon sx={{ color: isFirst ? "#403F3F" : "white" }} />
+              <Link href={`/title/${manga.id}/chapter/${prevChapter?.id}`} passHref>
+                <ArrowBackRoundedIcon sx={{ color: isFirst ? "#403F3F" : "white" }} />
+              </Link>
             </IconButton>
             <Autocomplete
               options={filteredChapters}
@@ -151,7 +156,9 @@ const MangaDetailPage = () => {
               )}
             />
             <IconButton disabled={isLast}>
-              <ArrowForwardRoundedIcon sx={{ color: isLast ? "#403F3F" : "white" }} />
+              <Link href={`/title/${manga.id}/chapter/${nextChapter?.id}`} passHref>
+                <ArrowForwardRoundedIcon sx={{ color: isLast ? "#403F3F" : "white" }} />
+              </Link>
             </IconButton>
           </div>
         </div>
@@ -168,7 +175,9 @@ const MangaDetailPage = () => {
         </div>
         <div className="w-full px-4 items-center flex flex-row justify-center gap-4 pt-7">
           <IconButton disabled={isFirst}>
-            <ArrowBackRoundedIcon sx={{ color: isFirst ? "#403F3F" : "white" }} />
+            <Link href={`/title/${manga.id}/chapter/${prevChapter?.id}`} passHref>
+              <ArrowBackRoundedIcon sx={{ color: isFirst ? "#403F3F" : "white" }} />
+            </Link>
           </IconButton>
           <Autocomplete
             options={filteredChapters}
@@ -214,7 +223,9 @@ const MangaDetailPage = () => {
             )}
           />
           <IconButton disabled={isLast}>
-            <ArrowForwardRoundedIcon sx={{ color: isLast ? "#403F3F" : "white" }} />
+            <Link href={`/title/${manga.id}/chapter/${nextChapter?.id}`} passHref>
+              <ArrowForwardRoundedIcon sx={{ color: isLast ? "#403F3F" : "white" }} />
+            </Link>
           </IconButton>
         </div>
       </div>
