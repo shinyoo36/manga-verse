@@ -1,3 +1,21 @@
+export interface UserData {
+  id: string;
+  name: string;
+  createdAt: string;
+  bookmarkList: UserBookmark[];
+}
+
+export interface UserBookmark {
+  bookmark: Bookmark;
+  status: "reading" | "completed" | "dropped";
+}
+
+export interface Bookmark {
+  mangaId: string;
+  coverId: string;
+}
+
+
 export interface Manga {
     id: string;
     type: string;

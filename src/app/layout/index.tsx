@@ -1,13 +1,18 @@
+
+
 import Link from 'next/link';
 import { Drawer, IconButton } from "@mui/material";
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import { useEffect, useRef, useState } from 'react';
 import Modal from '@mui/material/Modal';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import { Manga, MangaStat } from '@/components/types';
+import { Manga, MangaStat, UserData } from '@/components/types';
 import { getMangaCoverImage } from '@/utils/api';
 import BookmarkBorderRoundedIcon from '@mui/icons-material/BookmarkBorderRounded';
 import StarBorderRoundedIcon from '@mui/icons-material/StarBorderRounded';
+import AccountCircleRoundedIcon from '@mui/icons-material/AccountCircleRounded';
+import PersonOutlineRoundedIcon from '@mui/icons-material/PersonOutlineRounded';
+import { useRouter } from "next/navigation";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -17,6 +22,7 @@ interface MainLayoutProps {
 }
 
 const MainLayout = ({ children, bgImage, mainPage, readPage}: MainLayoutProps) => {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -26,6 +32,9 @@ const MainLayout = ({ children, bgImage, mainPage, readPage}: MainLayoutProps) =
     setMangaStats(null);
   };
   
+  const [openProfile, setOpenProfile] = useState(false);
+  const handleOpenProfile = () => setOpenProfile(true);
+  const handleCloseProfile = () => setOpenProfile(false);
 
   const [searchInput, setSearchInput] = useState("");
   const [searchMangaData, setSearchMangaData] = useState<Manga[]>([]);
@@ -33,6 +42,30 @@ const MainLayout = ({ children, bgImage, mainPage, readPage}: MainLayoutProps) =
   const inputRef = useRef<HTMLInputElement>(null);
   const [dots, setDots] = useState(".");
 
+  const [userData, setUserData] = useState<UserData | null>(null);
+  
+  const handleLogOut = () => {
+    localStorage.removeItem("userData"); 
+    setUserData(null);
+    setTimeout(() => {
+      router.push("/")
+  }, 500)
+  }
+
+  useEffect(() => {
+      const storedData = localStorage.getItem("userData");
+      if (storedData) {
+          const parsedData = JSON.parse(storedData);
+  
+          const now = new Date().getTime();
+          if (parsedData.expiry > now) {
+              setUserData(parsedData.data);
+          } else {
+              localStorage.removeItem("userData"); 
+          }
+      }
+  }, []);
+  
   useEffect(() => {
     const interval = setInterval(() => {
       setDots((prev) => (prev.length === 3 ? "." : prev + "."));
@@ -89,7 +122,7 @@ const fetchData = async () => {
 };
 
   return (
-    <div className="w-full min-h-screen flex justify-center mb-5 gap">
+    <div className="w-full min-h-screen flex justify-center pb-5 gap">
       <div className="max-w-[1280px] w-full lg:max-w-none relative">
         <Drawer anchor="top" open={open} onClose={handleClose} onTransitionEnd={() => inputRef.current?.focus()}>
           <div className="flex flex-col px-4 bgItam  text-white">
@@ -142,13 +175,13 @@ const fetchData = async () => {
                             className="absolute top-0 left-0 w-full h-full object-cover rounded-md" 
                             alt={manga.attributes.title.en || "Manga Cover"} 
                           />
-                            <p className={`absolute z-10 font-medium text-[10px] ${manga.attributes.status === 'completed' ? "bgIjo" : "bgOren"} bgOren rounded-t-sm bottom-0 px-1 left-1/2 transform -translate-x-1/2`}>{manga.attributes.status}</p>
+                            <p className={`absolute z-10 font-medium text-[10px] ${manga.attributes.status === 'completed' ? "bgIjo" : "bgOrenNoHover"} rounded-t-sm bottom-0 px-1 left-1/2 transform -translate-x-1/2`}>{manga.attributes.status}</p>
                           </div>
                           <div className='flex flex-col justify-between'>
                             <div>
                               <p className="text-[14px] font-semibold line-clamp-2">{manga.attributes.title.en || Object.values(manga.attributes.title)[0]}</p>
                               <div className="flex flex-row gap-2 flex-wrap">
-                                <p className="text-[12px] font-medium bgOren px-2 rounded-sm">{manga.attributes.contentRating.toUpperCase()}</p>
+                                <p className="text-[12px] font-medium bgOrenNoHover px-2 rounded-sm">{manga.attributes.contentRating.toUpperCase()}</p>
                                 {manga.attributes.tags
                                   .filter((genre) => genre.attributes.group === 'genre')
                                   .slice(0, 6)
@@ -187,24 +220,67 @@ const fetchData = async () => {
             )}
           </div>
         </Drawer>
+        <Drawer anchor="right" open={openProfile} onClose={handleCloseProfile}>
+          <div className="flex flex-col px-4 bgItam h-full w-full min-w-[300px] text-white">
+            <div className="bgItam sticky top-0 z-50 min-h-[156px] w-full px-4 py-5 space-y-5">
+                <div className='flex items-center justify-center flex-col gap-2'>
+                    <p className='text-[24px]  text-white'>{userData?.name || 'Guest'}</p>
+                    {userData? (
+                      <img src="/img/bruno.jpg" className='w-[200px] aspect-square rounded-full'/>
+                      ) : (
+                      <AccountCircleRoundedIcon sx={{ fontSize: 100}}/>
+                    )}
+                </div>
+                {!userData && (
+                <div className='flex flex-col items-center gap-4 border-t-[2px] border-t-[#FD5F00] pt-4'>
+                  <Link href={"/sign-in"} passHref>
+                    <p className='w-[160px] bgOren text-center py-2 rounded-sm text-[14px] font-medium'>Sign In</p>
+                  </Link>
+                  <Link href={"/register"} passHref>
+                    <p className='w-[160px] chList text-center py-2 rounded-sm text-[14px] font-medium'>Register</p>
+                  </Link>
+                </div>
+                )}
+                {userData && (
+                <div>
+                  <div className='flex flex-col border-t-[2px] border-t-[#FD5F00] py-4'>
+                      <Link href="/profile" passHref className='flex flex-row items-center gap-x-2 cursor-pointer'>
+                        <PersonOutlineRoundedIcon sx={{fontSize: 32}}/>
+                        <p className='w-[160px] py-2 rounded-sm text-[18px] font-medium opacity-80'>Profile</p>
+                      </Link>
+                      <Link href="/bookmark" passHref className='flex flex-row items-center gap-x-2 cursor-pointer'>
+                        <BookmarkBorderRoundedIcon sx={{fontSize: 30}}/>
+                        <p className='w-[160px] py-2 rounded-sm text-[18px] font-medium opacity-80'>Bookmark</p>
+                      </Link>
+                  </div>
+                  <div className='flex flex-col items-center gap-4 border-t-[2px] border-t-[#FD5F00] py-4 cursor-pointer' onClick={handleLogOut}>
+                      <p className='w-[160px] bgOren text-center py-2 rounded-sm text-[14px] font-medium'>Log Out</p>
+                  </div>
+                </div>
+                )}
+            </div>
+          </div>
+        </Drawer>
         <div 
-          className={`w-full header lg:flex lg:flex-col lg:items-center ${mainPage ? "h-[302.5px] md:h-[372.5px]" : "h-[337.5px]"} header`}
+          className={`w-full header lg:flex lg:flex-col lg:items-center ${mainPage ? "h-[302.5px] md:h-[372.5px]" : "h-[378.5px] md:h-[338.5px]"} header`}
           style={bgImage ? { "--bg-image": `url(${bgImage})` } as React.CSSProperties : {}}
         >
           <div className="lg:max-w-[1280px] w-full py-1 px-4 flex justify-between items-center">
             <Link href="/" passHref>
               <p className="font-protest text-[32px] tracking-wide">MangaVerse</p>
             </Link>
-            <div className="flex gap-4">
+            <div className="flex gap-x-1 md:gap-x-2">
               <IconButton onClick={handleOpen}>
-                <img src="/icons/search.svg" alt="Search" />
+                <img src="/icons/search.svg" alt="Search" className='width-[30px]'/>
               </IconButton>
-              {/* <img src="/icons/profile.svg" alt="Profile" /> */}
+              <IconButton onClick={handleOpenProfile}>
+                <img src="/icons/profile.svg" alt="Search" className='width-[30px]'/>
+              </IconButton>
             </div>
           </div>
-          <div className={`lg:max-w-[1280px] flex-grow flex flex-col ${readPage ? "px-0 pt-0 " : "px-4 pt-2"} *:pb-5 min-h-screen`}>
+          <div className={`min-h-[calc(100vh-56px)] h-full lg:max-w-[1280px] w-full flex-grow flex flex-col ${readPage ? "px-0 pt-0 " : "px-4 pt-2"} *:pb-5 `}>
             {children}
-            <Link href="https://mangadex.org/" passHref target="_blank" rel="noopener noreferrer" className='flex gap-2 justify-center'>
+            <Link href="https://mangadex.org/" passHref target="_blank" rel="noopener noreferrer" className='z-100 flex gap-2 justify-center'>
                 <p>© </p>
                 <p className='textOren'>MangaDex</p>
             </Link>

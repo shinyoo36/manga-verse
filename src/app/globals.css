@@ -77,14 +77,24 @@ html {
   z-index: -1;
 }
 
-
-.bgOren{
+.bgOrenNoHover{
   background: #FD5F00;
 }
+
+.bgOren {
+  background: #FD5F00;
+  border: 2.5px solid transparent;
+}
+
+.bgOren:hover {
+  border: 2.5px solid #F3F9FB;
+}
+
 
 .bgItam{
  background: #171717
 }
+
 .textOren{
   color: #FD5F00;
 }
@@ -93,11 +103,34 @@ html {
   background: #403F3F;
 }
 
+.chList{
+  background: #403F3F;
+  border: 2.5px solid transparent;
+}
+
+.chList:hover {
+  border: 2.5px solid #FD5F00;
+}
+
 .bgIjo{
   background: #51AF5B;
 }
 
 .autocomplete{
   background: #403F3F;
+}
 
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 2px solid #fff;
+  box-shadow: 0px 4px 24px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
+
+select {
+  width: 100%;
+  display: block; /* Ensures it respects the full width */
 }

@@ -11,9 +11,11 @@ import { Autocomplete, TextField } from "@mui/material";
 import { useRouter } from "next/navigation";
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
+import { NotFound } from "@/components/notfound";
 
 const MangaDetailPage = () => {
   const router = useRouter();
+  const [notFound, setNotFound] = useState(false);
 
   const { id, chapterId } = useParams(); 
   const [manga, setManga] = useState<Manga | null>(null);
@@ -59,12 +61,15 @@ const MangaDetailPage = () => {
           fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/manga/chapter/${id}/${0}`).then(res => res.json()),
           fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/chapter/details/${chapterId}`).then(res => res.json()),
         ]);
-
-        setManga(mangaData.data);
-        filterTopScanlationGroup(chapterList.data);
-        setChapterData(chapterData);
-        setHash(chapterData.chapter.hash);
-        setBaseUrl(chapterData.baseUrl);
+        if (mangaData.status === 404) {
+          setNotFound(true);
+        } else {
+          setManga(mangaData.data);
+          filterTopScanlationGroup(chapterList.data);
+          setChapterData(chapterData);
+          setHash(chapterData.chapter.hash);
+          setBaseUrl(chapterData.baseUrl);
+        }
       } catch (error) {
         console.error("Failed to fetch manga data:", error);
       }
@@ -72,6 +77,10 @@ const MangaDetailPage = () => {
 
     fetchData();
   }, [id, chapterId]);
+
+  if (notFound) {
+    return <NotFound />;
+  }
 
   if (!manga) return <Loading/>;
   if (!filteredChapters) return <Loading/>;
@@ -146,7 +155,7 @@ const MangaDetailPage = () => {
             </IconButton>
           </div>
         </div>
-        <div className="lg:max-w-[768px]">
+        <div className="lg:max-w-[768px] min-h-screen">
         {chapterData.chapter.data.map((fileName, index) => (
           <img
             key={index}

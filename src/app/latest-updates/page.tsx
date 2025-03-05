@@ -31,7 +31,7 @@ function LatestUpdatesContent () {
   const searchParams = useSearchParams();
   const page = Number(searchParams.get("page")) || 1;
 
-  const size = 24;
+  const size = 32;
   const offset = (page - 1) * size; 
 
   const [latestUpdatesData, setLatestUpdatesData] = useState<Chapter[]>([]);
@@ -182,11 +182,11 @@ const LatestUpdates: React.FC<MangaDetailProps> = ({ data, chapterDatas, total, 
               <Link key={manga.id} href={`/title/${manga.id}`} passHref>
                 <div  className="flex flex-col gap-y-[2px]">
                   <div className="relative w-full h-full aspect-[3/4]">
-                  <img 
-                    src={image} 
-                    className="absolute top-0 left-0 w-full h-full object-cover rounded-md" 
-                    alt={manga.attributes.title.en || "Manga Cover"} 
-                  />
+                    <img 
+                      src={image} 
+                      className="absolute top-0 left-0 w-full h-full object-cover rounded-md" 
+                      alt={manga.attributes.title.en || "Manga Cover"} 
+                    />
                     <p className={`absolute z-10 font-medium text-[10px] ${manga.attributes.status === 'completed' ? "bgIjo" : "bgOren"} bgOren rounded-t-sm bottom-0 px-1 left-1/2 transform -translate-x-1/2`}>{manga.attributes.status}</p>
                   </div>
                   <p className="text-[14px] font-semibold line-clamp-1">{manga.attributes.title.en || Object.values(manga.attributes.title)[0]}</p>

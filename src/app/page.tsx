@@ -119,13 +119,13 @@ export default function Home() {
                         className="absolute h-full w-full rounded-md object-cover"
                         alt={manga.attributes.title.en || "Manga Cover"} 
                       />
-                      <p className={`absolute z-10 font-medium text-[10px] ${manga.attributes.status === 'completed' ? "bgIjo" : "bgOren"} bgOren rounded-t-sm bottom-0 px-1 left-1/2 transform -translate-x-1/2`}>{manga.attributes.status}</p>
+                      <p className={`absolute z-10 font-medium text-[10px] ${manga.attributes.status === 'completed' ? "bgIjo" : "bgOrenNoHover"} rounded-t-sm bottom-0 px-1 left-1/2 transform -translate-x-1/2`}>{manga.attributes.status}</p>
                     </div>
                     <div className="flex flex-col justify-between">
                       <div className="space-y-1">
                         <p className="text-[16px] md:text-[28px] font-bold line-clamp-2">{manga.attributes.title.en}</p>
                         <div className="flex gap-2 flex-wrap">
-                          <div className="bgOren px-2 rounded-md">
+                          <div className="bgOrenNoHover px-2 rounded-md">
                               <p className="text-[12px] font-medium">{manga.attributes.contentRating.toUpperCase()}</p>
                           </div>
                           {manga.attributes.tags
@@ -135,9 +135,11 @@ export default function Home() {
                               <p className="text-[12px] font-medium">{genre.attributes.name.en.toUpperCase()}</p>
                             </div>
                           ))}
-                          <p className="hidden md:block text-[14px] font-regular text-justify">
-                            {manga.attributes.description.en}
-                          </p>
+                          <div className='hidden md:flex'>
+                            <p className="text-[14px] font-regular text-justify line-clamp-6 break-all break-words">
+                              {manga.attributes.description.en}
+                            </p>
+                          </div>
                         </div>
                       </div>
                       <p className="text-[14px]italic">{author?.attributes?.name}, {artist?.attributes?.name}</p>
@@ -215,7 +217,7 @@ const LatestUpdates: React.FC<MangaDetailProps> = ({ data, chapterDatas }) => {
                     className="absolute top-0 left-0 w-full h-full object-cover rounded-md" 
                     alt={manga.attributes.title.en || "Manga Cover"} 
                   />
-                    <p className={`absolute z-10 font-medium text-[10px] ${manga.attributes.status === 'completed' ? "bgIjo" : "bgOren"} bgOren rounded-t-sm bottom-0 px-1 left-1/2 transform -translate-x-1/2`}>{manga.attributes.status}</p>
+                    <p className={`absolute z-10 font-medium text-[10px] ${manga.attributes.status === 'completed' ? "bgIjo" : "bgOrenNoHover"} rounded-t-sm bottom-0 px-1 left-1/2 transform -translate-x-1/2`}>{manga.attributes.status}</p>
                   </div>
                   <p className="text-[14px] font-semibold line-clamp-1">
                     {manga.attributes.title?.en || Object.values(manga.attributes.title || {})[0] }
