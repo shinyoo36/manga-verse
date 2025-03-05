@@ -16,7 +16,6 @@ import Alert from '@mui/material/Alert';
 import CheckIcon from '@mui/icons-material/Check';
 import { Modal } from "@mui/material";
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
-import { NotFound } from "@/components/notfound";
 
 const MangaDetailPage = () => {
   const { id } = useParams(); 
@@ -76,11 +75,15 @@ const MangaDetailPage = () => {
         } else {
           const chapterData1 = Array.isArray(chapterList.data) ? chapterList.data : [];
           const chapterData2 = Array.isArray(chapterList2.data) ? chapterList2.data : [];
+  
           const mergedChapters = [...chapterData1, ...chapterData2];
-          setManga(mangaData.data);
+          console.log("mangaData:", mangaData);
+  
+          setManga(mangaData.data.data);
           filterTopScanlationGroup(mergedChapters);
           setMangaStat(mangaStat.statistics);
         }
+
       } catch (error) {
         console.error("Failed to fetch manga data:", error);
       }
@@ -101,14 +104,12 @@ const MangaDetailPage = () => {
       }
     }
   }, [userData, manga?.id]); 
-  
-  if (notFound) {
-    return <NotFound />;
-  }
 
   if (!manga) return <Loading/>;
+  console.log("manga:", manga);
 
   const image = getMangaCoverImage(manga.id, manga.relationships, "512");
+  console.log("image", image)
   
   if (!image) return <Loading/>;
 
@@ -147,6 +148,7 @@ const MangaDetailPage = () => {
   const formattedFollows = new Intl.NumberFormat("en-US").format(follows); 
   const formattedRating = rating?.toFixed(2);
   const coverArt = manga.relationships.find(rel => rel.type === "cover_art");
+  
 
   const bookmarkManga = async (id: string, mangaId: string, coverId: string, status: string) => {
     try {
@@ -220,6 +222,14 @@ const MangaDetailPage = () => {
       }
       setOpen(false);
   }
+
+  console.log("status", status);
+  console.log("tes",userData?.data?.bookmarkList?.some(
+    (bookmark: { bookmark: {mangaId: string; coverId: string} }) => bookmark.bookmark?.mangaId === manga.id
+  ));
+
+
+
 
   return (
     <MainLayout bgImage={image}>

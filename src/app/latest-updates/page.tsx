@@ -142,7 +142,9 @@ const LatestUpdates: React.FC<MangaDetailProps> = ({ data, chapterDatas, total, 
       <div className="flex flex-col justify-center gap-4">
         <div className="flex flex-row justify-between items-center">
           <p className="text-[16px] font-bold">Latest Updates</p>
-          <p className="text-[14px] font-bold bg-[#FD5F00] px-2 rounded-sm">Back</p>
+          <Link href="/" passHref>
+            <p className="text-[14px] font-bold bg-[#FD5F00] px-2 rounded-sm">Back</p>
+          </Link>
         </div>
         <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-y-6 gap-x-4 '>
           {data.map((manga, index) => {

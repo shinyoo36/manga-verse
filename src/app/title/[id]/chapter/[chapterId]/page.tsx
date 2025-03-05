@@ -64,7 +64,7 @@ const MangaDetailPage = () => {
         if (mangaData.status === 404) {
           setNotFound(true);
         } else {
-          setManga(mangaData.data);
+          setManga(mangaData.data.data);
           filterTopScanlationGroup(chapterList.data);
           setChapterData(chapterData);
           setHash(chapterData.chapter.hash);
