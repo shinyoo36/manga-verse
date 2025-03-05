@@ -124,7 +124,7 @@ const fetchData = async () => {
   return (
     <div className="w-full min-h-screen flex justify-center pb-5 gap">
       <div className="max-w-[1280px] w-full lg:max-w-none relative">
-        <Drawer anchor="top" open={open} onClose={handleClose} onTransitionEnd={() => inputRef.current?.focus()}>
+        <Drawer anchor="top" open={open} onClose={handleClose} onTransitionEnd={() => inputRef.current?.focus()} PaperProps={{sx: { backgroundColor: "#171717" }}}>
           <div className="flex flex-col px-4 bgItam  text-white">
             <div className="bgItam sticky top-0 z-50 h-[56px] w-full flex gap-2 flex-row justify-between items-center px-4">
               <div className="relative w-full">
@@ -220,7 +220,7 @@ const fetchData = async () => {
             )}
           </div>
         </Drawer>
-        <Drawer anchor="right" open={openProfile} onClose={handleCloseProfile}>
+        <Drawer anchor="right" open={openProfile} onClose={handleCloseProfile}  PaperProps={{sx: { backgroundColor: "#171717" }}}>
           <div className="flex flex-col px-4 bgItam h-full w-full min-w-[300px] text-white">
             <div className="bgItam sticky top-0 z-50 min-h-[156px] w-full px-4 py-5 space-y-5">
                 <div className='flex items-center justify-center flex-col gap-2'>
