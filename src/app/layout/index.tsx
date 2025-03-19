@@ -126,11 +126,11 @@ const fetchData = async () => {
       <div className="max-w-[1280px] w-full lg:max-w-none relative">
         <Drawer anchor="top" open={open} onClose={handleClose} onTransitionEnd={() => inputRef.current?.focus()} PaperProps={{sx: { backgroundColor: "#171717" }}}>
           <div className="flex flex-col px-4 bgItam  text-white">
-            <div className="bgItam sticky top-0 z-50 h-[56px] w-full flex gap-2 flex-row justify-between items-center px-4">
+            <div className="bgItam sticky top-0 z-50 h-[56px] w-full flex gap-x-2 flex-row justify-between items-center px-4">
               <div className="relative w-full">
                 <input
                   ref={inputRef} 
-                  className="text-white font-poppins w-full bgAbu no-arrows border-none outline-none rounded-sm focus:border-[#FD5F00] focus:ring-2 focus:ring-[#FD5F00] px-2 py-[5px]"
+                  className="text-white font-poppins w-full bgAbuHover no-arrows border-none outline-none rounded-sm px-2 py-[5px]"
                   value={searchInput}
                   onChange={(e) => {
                     const value = e.target.value;
@@ -140,16 +140,41 @@ const fetchData = async () => {
                   }}
                   placeholder="Type here..."
                 />
-                <img 
-                  src="/icons/search.svg" 
-                  alt="Search" 
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 w-[20px]"
-                />
+                 {searchInput == '' ? (
+                 <img 
+                    src="/icons/search.svg" 
+                    alt="Search" 
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 w-[20px]"
+                  />
+                 ) : (
+                      <button 
+                        className='absolute right-3 top-1/2 transform -translate-y-1/2 w-[20px]' 
+                        onClick={() => {
+                          setSearchInput('');
+                          setSearchMangaData([]); 
+                          setMangaStats(null);
+                        }} 
+                      >
+                          <CloseRoundedIcon
+                              sx={{
+                                  fontSize: "28px",
+                                  color: "white",
+                                  "&:hover": {
+                                  color: "#FD5F00",
+                                  },
+                              }}
+                          />
+                      </button>
+                  )}
+          
               </div>
               <button className='w-[24px]'
                onClick={handleClose} >
                 <CloseRoundedIcon sx={{ fontSize: "28px", color: "white" }} />
               </button>
+            </div>
+            <div className='flex justify-center '>
+              <Link href={"/search"} passHref className='text-[14px] py-1 px-2 bgOren mb-2 rounded-sm cursor-pointer'>Advanced Search</Link>
             </div>
             {searchInput && (
               searchMangaData.length === 0 && !mangaStats ? (
@@ -262,7 +287,7 @@ const fetchData = async () => {
           </div>
         </Drawer>
         <div 
-          className={`w-full header lg:flex lg:flex-col lg:items-center ${mainPage ? "h-[302.5px] md:h-[372.5px]" : "h-[378.5px] md:h-[338.5px]"} header`}
+          className={`w-full header lg:flex lg:flex-col lg:items-center ${mainPage ? "h-[317.5px] md:h-[437.5px] lg:h-[507.5px]" : "h-[447.5px] md:h-[342.5px] lg:h-[402.5px]"} `}
           style={bgImage ? { "--bg-image": `url(${bgImage})` } as React.CSSProperties : {}}
         >
           <div className="lg:max-w-[1280px] w-full py-1 px-4 flex justify-between items-center">

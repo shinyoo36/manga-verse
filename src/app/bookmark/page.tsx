@@ -14,7 +14,17 @@ const bookmark = () => {
     const mangaIds = userData?.bookmarkList.map(manga => manga.bookmark.mangaId) || [];
     const userBookmark = userData?.bookmarkList.map(manga => manga) || [];
     const [status, setStatus] = useState('reading');
+    const [loading, setLoading] = useState(true);
+    const [dots, setDots] = useState(".");
 
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setDots((prev) => (prev.length === 3 ? "." : prev + "."));
+      }, 500);
+  
+      return () => clearInterval(interval);
+    }, []);
+    
     useEffect(() => {
         const storedData = localStorage.getItem("userData");
         if (storedData) {
@@ -33,9 +43,10 @@ const bookmark = () => {
         if(mangaIds.length === 0){
             return;
         }
+
         const fetchMangaData = async () => {
-        const queryParams = mangaIds.map(id => `ids=${id}`).join("&");
           try {
+            const queryParams = mangaIds.map(id => `ids=${id}`).join("&");
             await Promise.all([
                 fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/manga/latest/data?${queryParams}`)
                 .then(response => response.json())
@@ -44,6 +55,8 @@ const bookmark = () => {
             ]);
           } catch (error) {
             console.error("Failed to fetch manga data:", error);
+          } finally {
+            setLoading(false);
           }
         };
     
@@ -65,7 +78,7 @@ const bookmark = () => {
             <div className=' flex justify-center'>
                 <div className='flex w-full h-full min-h-[calc(100vh-136px)] max-w-[900px] items-center flex-col gap-2 pt-12'>
                     {userData? (
-                      <img src="/img/bruno.jpg" className='w-[200px] aspect-square rounded-full'/>
+                      <img src="/img/bruno.jpg" className='w-[250px] aspect-square rounded-full'/>
                       ) : (
                       <AccountCircleRoundedIcon sx={{ fontSize: 100}}/>
                     )}
@@ -86,9 +99,16 @@ const bookmark = () => {
                                 onClick={() => setStatus('dropped')}>Dropped</p>
                         </div>
                         <div>
-                        <div className='grid grid-cols-1 w-full gap-[8px] min-h-[380px] overflow-y-auto'>
+                        <div className='grid grid-cols-1 w-full gap-[8px] min-h-[330px] overflow-y-auto'>
                         {filteredBookmarks.length === 0 ? (
-                        <p className="text-center text-[18px] font-semibold textOren">No Entry</p>
+                            (loading ? (
+                            <div className=" h-full justify-center items-center flex flex-col gap-3">
+                                <div className="w-12 h-12 border-4 bgborder-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+                                <p className="text-lg font-semibold">Loading{dots}</p>
+                            </div>    
+                            ) : (
+                            <p className="text-center text-[18px] font-semibold textOren">No Entry</p>
+                            ))
                         ) : (
                         filteredBookmarks.map(({ bookmark, manga }, index) => {
                             const image = getMangaCoverImage(manga.id, manga.relationships, "256");

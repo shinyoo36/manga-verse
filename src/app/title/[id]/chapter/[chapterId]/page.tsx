@@ -78,10 +78,8 @@ const MangaDetailPage = () => {
     fetchData();
   }, [id, chapterId]);
 
-  if (notFound) {
-    return <NotFound />;
-  }
 
+  if (notFound) return <NotFound/>;
   if (!manga) return <Loading/>;
   if (!filteredChapters) return <Loading/>;
   if (!chapterData) return <Loading/>;
@@ -137,7 +135,7 @@ const MangaDetailPage = () => {
               componentsProps={{
                 paper: {
                   sx: {
-                    bgcolor: "#403F3F", 
+                    bgcolor: "#2c2c2c", 
                     color: "white",
                   },
                 },

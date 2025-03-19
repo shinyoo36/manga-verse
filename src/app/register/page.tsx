@@ -75,7 +75,7 @@ const Register = () => {
                             <div className="w-full flex flex-col gap-y-1">
                                 <p className="text-[14px] font-regular ">Email</p>
                                 <input
-                                    className="text-white font-poppins w-full bgAbu no-arrows border-none outline-none rounded-sm focus:border-[#FD5F00] focus:ring-2 focus:ring-[#FD5F00] px-2 py-[5px]"
+                                    className="text-white font-poppins w-full bgAbuHover no-arrows border-none outline-none rounded-sm  px-2 py-[5px]"
                                     value={email}
                                     onChange={(e) => {
                                         const value = e.target.value;
@@ -87,7 +87,7 @@ const Register = () => {
                                 <p className="text-[14px] font-regular ">Password</p>
                                 <input
                                     type="password"
-                                    className="text-white font-poppins w-full bgAbu no-arrows border-none outline-none rounded-sm focus:border-[#FD5F00] focus:ring-2 focus:ring-[#FD5F00] px-2 py-[5px]"
+                                    className="text-white font-poppins w-full bgAbuHover no-arrows border-none outline-none rounded-sm  px-2 py-[5px]"
                                     value={password}
                                     onChange={(e) => {
                                         const value = e.target.value;
@@ -98,7 +98,7 @@ const Register = () => {
                             <div className="w-full flex flex-col gap-y-1">
                                 <p className="text-[14px] font-regular ">Name</p>
                                 <input
-                                    className="text-white font-poppins w-full bgAbu no-arrows border-none outline-none rounded-sm focus:border-[#FD5F00] focus:ring-2 focus:ring-[#FD5F00] px-2 py-[5px]"
+                                    className="text-white font-poppins w-full bgAbuHover no-arrows border-none outline-none rounded-sm  px-2 py-[5px]"
                                     value={name}
                                     onChange={(e) => {
                                         const value = e.target.value;
@@ -196,7 +196,7 @@ const GoogleLoginButton = () => {
         <div className="w-full flex flex-col items-center justify-center gap-y-4">
             <button
                 onClick={() => login()}
-                className="flex flex-row items-center justify-center gap-x-4 text-[14px] font-semibold w-full px-4 py-2 bgAbu text-white  rounded-sm  hover:border-[#FD5F00] hover:ring-2 hover:ring-[#FD5F00]"
+                className="flex flex-row items-center justify-center gap-x-4 text-[14px] font-semibold w-full px-4 py-2 bgAbuHover text-white  rounded-sm  "
             >
                 <img src="/icons/google.svg" className="w-[24px]"/>
                 <p>Register with Google </p>

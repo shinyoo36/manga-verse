@@ -12,86 +12,76 @@ import { useSearchParams } from 'next/navigation';
 import { getMangaCoverImage } from '@/utils/api';
 import Link from 'next/link';
 import MainLayout from "@/app/layout/index";
-import { Manga, MangaApiResponse, Chapter } from '@/components/types';
+import { Manga, MangaApiResponse, Chapter, MangaStat } from '@/components/types';
 import { Loading } from '@/components/loading';
 import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
 import ArrowBackRoundedIcon from '@mui/icons-material/ArrowBackRounded';
 import { IconButton } from "@mui/material";
 import { useRouter } from "next/navigation";
+import BookmarkBorderRoundedIcon from '@mui/icons-material/BookmarkBorderRounded';
+import StarBorderRoundedIcon from '@mui/icons-material/StarBorderRounded';
 
-export default function LatestUpdatesPage() {
+export default function HighestRatingPage() {
   return (
     <Suspense fallback={<Loading />}>
-      <LatestUpdatesContent />
+      <HighestRatingContent />
     </Suspense>
   );
 }
 
-function LatestUpdatesContent () {
+function HighestRatingContent () {
   const searchParams = useSearchParams();
   const page = Number(searchParams.get("page")) || 1;
 
-  const size = 32;
+  const size = 20;
   const offset = (page - 1) * size; 
 
-  const [chaptersData, setChaptersData] = useState<Chapter[]>([]);
-  const [latestUpdatesMangaData, setLatestUpdatesMangaData] = useState<Manga[]>([]);
+  const [latestUpdatesMangaData, setHighestRatingMangaData] = useState<Manga[]>([]);
+  const [mangaStats, setMangaStats] = useState<MangaStat | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchMangaData = async () => {
       try {
         setLoading(true);
-          
-        const chapterResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/manga/latest/${size}/${offset}`);
-        const chapterData = await chapterResponse.json();
-        const chapterList: Chapter[] = chapterData.data;
-
-        const ids = Array.from(
-            new Set(
-              chapterList
-                    .map(chapter => chapter.relationships.find(rel => rel.type === "manga")?.id)
-                    .filter(Boolean)
-            )
-        ).slice(0, 20);
-
-        if (ids.length === 0) return;
-
-        const queryParams = ids.map(id => `ids=${id}`).join("&");
-    
-        const mangaResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/manga/latest/data?${queryParams}`);
-        const mangaData = await mangaResponse.json();
-
-        setChaptersData(chapterData.data);
-        setLatestUpdatesMangaData(mangaData.data) 
-        
+  
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/manga/highestrating/${size}/${offset}`);
+        const mangaData = await response.json();
+  
+        const mangaIds = mangaData.data.map((manga: Manga) => manga.id);
+  
+        const statsResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/manga/stat-ids/${mangaIds}`);
+        const statsData = await statsResponse.json();
+  
+        setHighestRatingMangaData(mangaData.data);
+        setMangaStats(statsData.statistics);
+  
       } catch (error) {
         console.error("Failed to fetch manga data:", error);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchMangaData();
   }, [size, offset]);
-  console.log("chapterData.data", chaptersData);
-
+  
   return (
     <MainLayout mainPage={true}>
-      <LatestUpdates data={latestUpdatesMangaData}  chapterDatas={chaptersData} loading={loading} total={100} currentPage={page}/>
+      <HighestRating data={latestUpdatesMangaData} mangaStats={mangaStats} loading={loading} total={100} currentPage={page}/>
     </MainLayout>
   );
 }
 
 interface MangaDetailProps {
   data: Manga[];
-  chapterDatas: Chapter[];
+  mangaStats: MangaStat | null;
   loading: boolean;
   total: number;
   currentPage: number;
 }
 
-const LatestUpdates: React.FC<MangaDetailProps> = ({ data, chapterDatas, loading, total, currentPage }) => {
+const HighestRating: React.FC<MangaDetailProps> = ({ data, mangaStats, loading, total, currentPage }) => {
   const router = useRouter();
   const [dots, setDots] = useState(".");
   useEffect(() => {
@@ -101,7 +91,7 @@ const LatestUpdates: React.FC<MangaDetailProps> = ({ data, chapterDatas, loading
 
     return () => clearInterval(interval);
   }, []);
-
+  
   const generatePagination = (currentPage: number, total: number) => {
     const pages: (number | "...")[] = [];
     const showDots = total > 4;
@@ -133,7 +123,7 @@ const LatestUpdates: React.FC<MangaDetailProps> = ({ data, chapterDatas, loading
 
     if (!isNaN(pageNumber)) {
       pageNumber = Math.max(1, Math.min(pageNumber, total)); 
-      router.push(`/latest-updates?page=${pageNumber}`);
+      router.push(`/most-followed?page=${pageNumber}`);
     }
 
     setInputStates((prev) => ({ ...prev, [index]: false }));
@@ -147,7 +137,7 @@ const LatestUpdates: React.FC<MangaDetailProps> = ({ data, chapterDatas, loading
               <Link href={"/"} passHref>
                   <ArrowBackRoundedIcon/>
               </Link>
-              <p className='text-[24px]'>Latest Updates</p>
+              <p className='text-[24px]'>Top Rating</p>
             </div>
             <div className='flex flex-row gap-x-2 items-center justify-center'>
                 <div 
@@ -174,36 +164,10 @@ const LatestUpdates: React.FC<MangaDetailProps> = ({ data, chapterDatas, loading
             <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-y-6 gap-x-4 '>
               {data.map((manga, index) => {
                 const image = getMangaCoverImage(manga.id, manga.relationships, "256");
-  
-                const chapterDataList = chapterDatas
-                .filter(chapter => chapter.relationships.find(rel => rel.type === "manga")?.id == manga.id)
-                  .map(chapter => ({
-                    id: chapter.id,
-                    chapter: chapter.attributes.chapter, 
-                    readableAt: chapter.attributes.readableAt, 
-                  }));
-              
-                const chapterData = chapterDataList.length > 0 
-                  ? chapterDataList.sort((a, b) => new Date(b.readableAt).getTime() - new Date(a.readableAt).getTime())[0]
-                  : null;
-                
-                const currentTime = new Date();
-  
-                const readableAtTime = chapterData ? new Date(chapterData.readableAt) : null;
-  
-                const getTimeDifference = (pastTime: Date) => {
-                  const diffInSeconds = Math.floor((currentTime.getTime() - pastTime.getTime()) / 1000);
-                  
-                  if (diffInSeconds < 60) return `${diffInSeconds} sec ago`;
-                  const diffInMinutes = Math.floor(diffInSeconds / 60);
-                  if (diffInMinutes < 60) return `${diffInMinutes} min ago`;
-                  const diffInHours = Math.floor(diffInMinutes / 60);
-                  if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? "s" : ""} ago`;
-                  const diffInDays = Math.floor(diffInHours / 24);
-                  return `${diffInDays} day${diffInDays > 1 ? "s" : ""} ago`;
-                };
-                
-                const timeAgo = readableAtTime ? getTimeDifference(readableAtTime) : "";
+                const follows = mangaStats ? mangaStats[Object.keys(mangaStats)[index]]?.follows ?? 0 : 0;
+                const rating = mangaStats ? mangaStats[Object.keys(mangaStats)[index]]?.rating.average ?? 0 : 0;
+                const formattedFollows = follows >= 1000 ? `${(follows / 1000).toFixed(0)}k` : follows;
+                const formattedRating = rating?.toFixed(2);
   
                 return (
                   <Link key={manga.id} href={`/title/${manga.id}`} passHref>
@@ -217,12 +181,20 @@ const LatestUpdates: React.FC<MangaDetailProps> = ({ data, chapterDatas, loading
                         <p className={`absolute z-10 font-medium text-[10px] ${manga.attributes.status === 'completed' ? "bgIjo" : "bgOrenNoHover"} rounded-t-sm bottom-0 px-1 left-1/2 transform -translate-x-1/2`}>{manga.attributes.status}</p>
                       </div>
                       <p className="text-[14px] font-semibold line-clamp-1">{manga.attributes.title.en || Object.values(manga.attributes.title)[0]}</p>
-                      <div className='flex flex-row justify-between w-full'>
-                        <div className="flex flex-row items-center gap-1">
-                          <div className="w-[4px] h-[4px] bgOrenNoHover rounded-full" />
-                          <p className="text-[12px] opacity-80">{chapterData?.chapter ? `Chapter ${chapterData?.chapter}` : "Oneshot"}</p>
-                        </div>
-                          <p className="text-[12px] opacity-80">{timeAgo}</p>
+                      <div className='flex flex-row justify-between items-center w-full'>
+                          <div className="flex flex-row gap-2 flex-wrap">
+                              <p className="text-[10px] md:text-[12px] font-medium bgOrenNoHover px-1 rounded-sm">{manga.attributes.contentRating.toUpperCase()}</p>
+                          </div>
+                          <div className="flex flex-row gap-x-[2px] items-center">
+                              <div className="flex flex-row  justify-center items-center">
+                                  <BookmarkBorderRoundedIcon className='text-[17px] sm:text-[19px]' sx={{color:'#FD5F00'}} />
+                                  <p className="text-[10px] md:text-[12px] font-regular ">{formattedFollows}</p>
+                              </div>
+                              <div className="flex flex-row justify-center items-center">
+                                  <StarBorderRoundedIcon className='text-[18px] sm:text-[20px]' sx={{color:'#FD5F00'}} />
+                                  <p className="text-[10px] md:text-[12px] font-regular">{formattedRating}</p>
+                              </div>
+                          </div>
                       </div>
                     </div>
                   </Link>
@@ -233,36 +205,10 @@ const LatestUpdates: React.FC<MangaDetailProps> = ({ data, chapterDatas, loading
             <div className='flex flex-col gap-3 '>
               {data.map((manga, index) => {
                 const image = getMangaCoverImage(manga.id, manga.relationships, "256");
-  
-                const chapterDataList = chapterDatas
-                .filter(chapter => chapter.relationships.find(rel => rel.type === "manga")?.id == manga.id)
-                  .map(chapter => ({
-                    id: chapter.id,
-                    chapter: chapter.attributes.chapter, 
-                    readableAt: chapter.attributes.readableAt, 
-                  }));
-              
-                const chapterData = chapterDataList.length > 0 
-                  ? chapterDataList.sort((a, b) => new Date(b.readableAt).getTime() - new Date(a.readableAt).getTime())[0]
-                  : null;
-                
-                const currentTime = new Date();
-  
-                const readableAtTime = chapterData ? new Date(chapterData.readableAt) : null;
-  
-                const getTimeDifference = (pastTime: Date) => {
-                  const diffInSeconds = Math.floor((currentTime.getTime() - pastTime.getTime()) / 1000);
-                  
-                  if (diffInSeconds < 60) return `${diffInSeconds} sec ago`;
-                  const diffInMinutes = Math.floor(diffInSeconds / 60);
-                  if (diffInMinutes < 60) return `${diffInMinutes} min ago`;
-                  const diffInHours = Math.floor(diffInMinutes / 60);
-                  if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? "s" : ""} ago`;
-                  const diffInDays = Math.floor(diffInHours / 24);
-                  return `${diffInDays} day${diffInDays > 1 ? "s" : ""} ago`;
-                };
-                
-                const timeAgo = readableAtTime ? getTimeDifference(readableAtTime) : "";
+                const follows = mangaStats ? mangaStats[Object.keys(mangaStats)[index]]?.follows ?? 0 : 0;
+                const rating = mangaStats ? mangaStats[Object.keys(mangaStats)[index]]?.rating.average ?? 0 : 0;
+                const formattedFollows = new Intl.NumberFormat("en-US").format(follows); 
+                const formattedRating = rating?.toFixed(2);
   
                 return (
                   <Link key={manga.id} href={`/title/${manga.id}`} passHref>
@@ -298,13 +244,16 @@ const LatestUpdates: React.FC<MangaDetailProps> = ({ data, chapterDatas, loading
                               </p>
                           </div>
                         </div>
-                        <div className="flex items-center justify-between gap-1">
-                          <div className="flex flex-row items-center gap-x-1">
-                            <div className="w-[4px] h-[4px] bgOrenNoHover rounded-full" />
-                            <p className="text-[12px] opacity-80">{chapterData?.chapter ? `Chapter ${chapterData?.chapter}` : "Oneshot"}</p>
-                          </div>
-                          <p className="text-[12px] opacity-80">{timeAgo}</p>
-                          </div>
+                        <div className="flex flex-row gap-x-2 py-1 items-center">
+                            <div className="flex flex-row gap-x-[2px] justify-center items-center">
+                                <BookmarkBorderRoundedIcon sx={{color:'#FD5F00'}} />
+                                <p className="text-[14px] font-regular ">{formattedFollows}</p>
+                            </div>
+                            <div className="flex flex-row gap-x-[2px] justify-center items-center">
+                                <StarBorderRoundedIcon sx={{color:'#FD5F00'}} />
+                                <p className="text-[14px] font-regular">{formattedRating}</p>
+                            </div>
+                        </div>
                       </div>
                     </div>
                   </Link>
@@ -313,17 +262,16 @@ const LatestUpdates: React.FC<MangaDetailProps> = ({ data, chapterDatas, loading
             </div>
           )
         )}
-     
         <div className='flex flex-row gap-4 justify-center items-center'>
           <IconButton disabled={currentPage === 1}>
-            <Link href={`/latest-updates?page=${currentPage-1}`} passHref>
+            <Link href={`/most-followed?page=${currentPage-1}`} passHref>
               <ArrowBackRoundedIcon sx={{ color: currentPage === 1 ? "#403F3F" : "white" }} />
             </Link>
           </IconButton>
           <div className='flex flex-row gap-2 justify-center items-center'>
           {pagination.map((page, index) => (
             typeof page === "number" ? (
-              <Link key={index} href={`/latest-updates?page=${page}`} passHref>
+              <Link key={index} href={`/most-followed?page=${page}`} passHref>
                 <div
                   className={`text-[16px] font-medium py-1 min-w-[30px] text-center rounded cursor-pointer ${
                     currentPage === page ? "bgOrenNoHover text-white" : "bgAbu"
@@ -362,7 +310,7 @@ const LatestUpdates: React.FC<MangaDetailProps> = ({ data, chapterDatas, loading
           ))}
           </div>
           <IconButton disabled={currentPage === total}>
-            <Link href={`/latest-updates?page=${currentPage+1}`} passHref>
+            <Link href={`/most-followed?page=${currentPage+1}`} passHref>
               <ArrowForwardRoundedIcon sx={{ color: currentPage === total ? "#403F3F" : "white" }} />
             </Link>
           </IconButton>
