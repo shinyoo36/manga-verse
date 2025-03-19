@@ -591,7 +591,7 @@ function SearchContent () {
                                     <FilterAltOffOutlinedIcon/>
                                 </button>
                                 <button 
-                                    className=' bgAbuHover select-none rounded-sm cursor-pointer flex flex-row justify-between items-center py-1 gap-x-2 pl-3 pr-2'
+                                    className=' bgAbuHover select-none rounded-sm cursor-pointer flex flex-row justify-between items-center py-1 gap-x-2 px-2'
                                     onClick={handleSearch}
                                     disabled={!(searchInput || selectedInclusionMode != 'AND' || selectedExclusionMode != 'OR' || selectedLanguage || selectedPublication || Object.values(selectedGenres).some(value => value !== null) || selectedSort != 'order[followedCount]=desc')}
                                 >
