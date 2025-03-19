@@ -45,7 +45,7 @@ function SearchContent () {
  
     useEffect(() => {
         if(currentPage != 1){
-            let offset = currentPage * 20
+            let offset = currentPage * 10
             setOffset(offset)
         }
         fetchData();
@@ -236,7 +236,7 @@ function SearchContent () {
     const buildQueryString = () => {
         const queryParts: string[] = [];
     
-        queryParts.push(`limit=20`);
+        queryParts.push(`limit=10`);
         if(currentPage == 1){
             queryParts.push(`offset=0`);
         } else {
@@ -337,7 +337,7 @@ function SearchContent () {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/manga-search/search?${reqParams}`);
             
             const mangaData = await response.json();
-            setTotal(Math.min(500, Math.ceil((mangaData.total || 0) / 20)));
+            setTotal(Math.min(500, Math.ceil((mangaData.total || 0) / 10)));
             setSearchMangaData(mangaData.data);
         
             const mangaIds = mangaData.data.map((manga: Manga) => manga.id);

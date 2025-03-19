@@ -33,7 +33,7 @@ function HighestRatingContent () {
   const searchParams = useSearchParams();
   const page = Number(searchParams.get("page")) || 1;
 
-  const size = 20;
+  const size = 10;
   const offset = (page - 1) * size; 
 
   const [latestUpdatesMangaData, setHighestRatingMangaData] = useState<Manga[]>([]);
