@@ -159,7 +159,7 @@ const MangaDetailPage = () => {
 
   
   const statuss = manga.attributes.tags
-    .filter((status) => status.attributes.group === 'status')
+    .filter((status) => status.attributes.group === 'genre')
     .map((status) => ({
       id: status.id,
       name: status.attributes?.name.en || "Unknown",
@@ -358,7 +358,9 @@ const MangaDetailPage = () => {
           />
           <p className={`absolute z-10 font-medium text-[10px] ${manga.attributes.status === 'completed' ? "bgIjo" : "bgOrenNoHover"} rounded-t-sm bottom-0 px-1 left-1/2 transform -translate-x-1/2`}>{manga.attributes.status}</p>
         </div>
-        <p className="text-[16px] font-bold pt-3 text-center line-clamp-1 w-[90%]">{manga.attributes.title.en}</p>
+        <div className="flex items-center justify-center w-full">
+          <p className="text-[16px] font-bold py-1 text-center line-clamp-1 w-[90%]">{manga.attributes.title.en}</p>
+        </div>
         <div className="flex flex-row gap-x-2 py-1 items-center justify-center">
           <div className="flex flex-row gap-1 justify-center items-center">
             <BookmarkBorderRoundedIcon sx={{color:'#FD5F00'}} />
